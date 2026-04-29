@@ -12,9 +12,9 @@
 
 - `<isEqual property="AA_TYPE" compareValue="s001">` -> `<if test='"s001".equals(aaType)'>`
 - `<isNotEqual property="BB_FFF_CODE" compareValue="C001">` -> `<if test='!"C001".equals(bbFffCode)'>`
-- `<iterate property="AAA_LIST" conjunction=",">` -> `<foreach collection="AAA_LIST" item="item1" separator=",">`
+- `<iterate property="AAA_LIST" conjunction=",">` -> `<foreach collection="aaaList" item="item1" separator=",">`
 
-조건 태그의 DTO `property` 값과 일반 `#PARAM_NAME#` 파라미터는 camelCase로 변환합니다. `iterate`의 collection 이름과 리스트 내부 컬럼명은 원래 이름을 유지합니다.
+조건 태그의 DTO `property` 값, 일반 `#PARAM_NAME#` 파라미터, `iterate`의 collection 이름은 camelCase로 변환합니다. 리스트 내부 컬럼명은 원래 이름을 유지합니다.
 
 ## 검증
 

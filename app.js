@@ -18,18 +18,13 @@ const CONDITIONAL_TAGS = new Map([
 ]);
 
 function toCamelCase(value) {
-  const cleaned = String(value || "").trim();
+  const cleaned = String(value || "").trim().toLowerCase();
 
   if (!cleaned) {
     return cleaned;
   }
 
-  if (!cleaned.includes("_")) {
-    return cleaned.charAt(0).toLowerCase() + cleaned.slice(1);
-  }
-
   return cleaned
-    .toLowerCase()
     .split("_")
     .filter(Boolean)
     .map((part, index) => {
@@ -113,12 +108,13 @@ function buildIfTag(tagName, tagSource) {
 function buildForeachTag(tagSource, iterateStack) {
   const attributes = parseAttributes(tagSource);
   const collection = attributes.property || attributes.collection || "";
+  const convertedCollection = toCamelCase(collection);
   const separator = attributes.conjunction ?? attributes.separator ?? "";
   const item = `item${iterateStack.length + 1}`;
 
   iterateStack.push({ collection, item });
 
-  return `<foreach collection="${collection}" item="${item}" separator="${separator}">`;
+  return `<foreach collection="${convertedCollection}" item="${item}" separator="${separator}">`;
 }
 
 function convertMyBatisXml(source) {
