@@ -10,6 +10,12 @@ const SAMPLE_XML = `<isEqual property = "AA_TYPE" compareValue="s001" >
   AND SEARCH_TEXT LIKE '%' || #SEARCH_TEXT# || '%'
 </isNotEmpty>
 
+<isEmpty property = "END_DATE" >
+  AND END_DATE IS NULL
+</isEmpty>
+
+select * from tb001 $STR_WHERE$
+
 <iterate property ="AAA_LIST" conjunction="" >
   <iterate property ="SUB_LIST" conjunction="," >
     ,NVL($SUB_LIST[].SUB_COL01$_$AAA_LIST[]$,0) as $SUB_LIST[].SUB_COL01$_$AAA_LIST[]$
@@ -20,6 +26,7 @@ const CONDITIONAL_TAGS = new Map([
   ["isequal", { type: "equals", operator: "" }],
   ["isnotequal", { type: "equals", operator: "!" }],
   ["isnotempty", { type: "notEmpty" }],
+  ["isempty", { type: "empty" }],
 ]);
 
 function toCamelCase(value) {
@@ -80,6 +87,20 @@ function convertDtoParameters(text, iterateStack) {
   });
 }
 
+function convertDollarParameters(text, iterateStack) {
+  const iterateCollections = new Set(iterateStack.map((context) => context.collection));
+
+  return text.replace(/\$\s*([A-Za-z_][\w.]*)\s*\$/g, (fullMatch, parameterName) => {
+    const rootName = parameterName.split(".")[0];
+
+    if (iterateCollections.has(rootName)) {
+      return fullMatch;
+    }
+
+    return `\${${convertHashParameter(parameterName)}}`;
+  });
+}
+
 function convertIteratePlaceholders(text, iterateStack) {
   return iterateStack.reduce((converted, context) => {
     const collectionPattern = escapeRegExp(context.collection);
@@ -97,7 +118,10 @@ function convertIteratePlaceholders(text, iterateStack) {
 }
 
 function convertTextSegment(text, iterateStack) {
-  return convertDtoParameters(convertIteratePlaceholders(text, iterateStack), iterateStack);
+  const convertedIterates = convertIteratePlaceholders(text, iterateStack);
+  const convertedHashes = convertDtoParameters(convertedIterates, iterateStack);
+
+  return convertDollarParameters(convertedHashes, iterateStack);
 }
 
 function buildIfTag(tagName, tagSource) {
@@ -110,6 +134,10 @@ function buildIfTag(tagName, tagSource) {
 
   if (tagConfig?.type === "notEmpty") {
     return `<if test='${propertyExpression} != null and ${propertyExpression} != ""'>`;
+  }
+
+  if (tagConfig?.type === "empty") {
+    return `<if test='${propertyExpression} == null or ${propertyExpression} == ""'>`;
   }
 
   return `<if test='${operator}"${compareValue}".equals(${propertyExpression})'>`;
@@ -128,7 +156,7 @@ function buildForeachTag(tagSource, iterateStack) {
 }
 
 function convertMyBatisXml(source) {
-  const tagPattern = /<\/?\s*(isEqual|isNotEqual|isNotEmpty|iterate)\b[^>]*>/gi;
+  const tagPattern = /<\/?\s*(isEqual|isNotEqual|isNotEmpty|isEmpty|iterate)\b[^>]*>/gi;
   const iterateStack = [];
   let result = "";
   let lastIndex = 0;

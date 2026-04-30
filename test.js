@@ -17,7 +17,10 @@ const conditionalSource = `<isEqual property = "AA_TYPE" compareValue="s001" >
 </isNotEqual>
 <isNotEmpty property = "USER_NAME" >
   AND USER_NAME = #USER_NAME#
-</isNotEmpty>`;
+</isNotEmpty>
+<isEmpty property = "KEYWORD" >
+  AND KEYWORD IS NULL
+</isEmpty>`;
 
 assert.equal(
   convertMyBatisXml(conditionalSource),
@@ -32,7 +35,17 @@ assert.equal(
 </if>
 <if test='userName != null and userName != ""'>
   AND USER_NAME = #{userName}
+</if>
+<if test='keyword == null or keyword == ""'>
+  AND KEYWORD IS NULL
 </if>`,
+);
+
+const dollarParameterSource = "select * from tb001 $STR_WHERE$ order by $SORT_COLUMN$";
+
+assert.equal(
+  convertMyBatisXml(dollarParameterSource),
+  "select * from tb001 ${strWhere} order by ${sortColumn}",
 );
 
 const iterateSource = `<iterate property ="AAA_LIST" conjunction="" >

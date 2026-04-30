@@ -13,7 +13,9 @@
 - `<isEqual property="AA_TYPE" compareValue="s001">` -> `<if test='"s001".equals(aaType)'>`
 - `<isNotEqual property="BB_FFF_CODE" compareValue="C001">` -> `<if test='!"C001".equals(bbFffCode)'>`
 - `<isNotEmpty property="USER_NAME">` -> `<if test='userName != null and userName != ""'>`
+- `<isEmpty property="KEYWORD">` -> `<if test='keyword == null or keyword == ""'>`
 - `<iterate property="AAA_LIST" conjunction=",">` -> `<foreach collection="aaaList" item="item1" separator=",">`
+- `$STR_WHERE$` -> `${strWhere}`
 
 조건 태그의 DTO `property` 값, 일반 `#PARAM_NAME#` 파라미터, `iterate`의 collection 이름은 camelCase로 변환합니다. 리스트 내부 컬럼명은 원래 이름을 유지합니다.
 
