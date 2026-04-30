@@ -47,6 +47,7 @@
         <ul>
           <li><code>&lt;isEqual property="AA_TYPE" compareValue="s001"&gt;</code> 는 <code>&lt;if test='"s001".equals(aaType)'&gt;</code> 로 변환합니다.</li>
           <li><code>&lt;isNotEqual&gt;</code> 은 의미에 맞게 <code>!</code> 를 붙여 <code>&lt;if test='!"C001".equals(bbFffCode)'&gt;</code> 로 변환합니다.</li>
+          <li><code>&lt;isNotEmpty property="USER_NAME"&gt;</code> 는 <code>&lt;if test='userName != null and userName != ""'&gt;</code> 로 변환합니다.</li>
           <li>태그의 <code>property</code> 값은 전체 소문자 변환 후 언더바 다음 문자만 대문자로 바꾸고 언더바를 제거합니다.</li>
           <li><code>SRCTYPE</code> 는 <code>srctype</code>, <code>AAA_LIST</code> 는 <code>aaaList</code> 로 변환합니다.</li>
           <li><code>iterate</code> 내부의 리스트 컬럼명은 camelCase로 변경하지 않습니다.</li>

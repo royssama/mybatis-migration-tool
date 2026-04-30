@@ -6,6 +6,10 @@ const SAMPLE_XML = `<isEqual property = "AA_TYPE" compareValue="s001" >
   AND BB_FFF_CODE != #BB_FFF_CODE#
 </isNotEqual>
 
+<isNotEmpty property = "SEARCH_TEXT" >
+  AND SEARCH_TEXT LIKE '%' || #SEARCH_TEXT# || '%'
+</isNotEmpty>
+
 <iterate property ="AAA_LIST" conjunction="" >
   <iterate property ="SUB_LIST" conjunction="," >
     ,NVL($SUB_LIST[].SUB_COL01$_$AAA_LIST[]$,0) as $SUB_LIST[].SUB_COL01$_$AAA_LIST[]$
@@ -13,8 +17,9 @@ const SAMPLE_XML = `<isEqual property = "AA_TYPE" compareValue="s001" >
 </iterate>`;
 
 const CONDITIONAL_TAGS = new Map([
-  ["isequal", { operator: "" }],
-  ["isnotequal", { operator: "!" }],
+  ["isequal", { type: "equals", operator: "" }],
+  ["isnotequal", { type: "equals", operator: "!" }],
+  ["isnotempty", { type: "notEmpty" }],
 ]);
 
 function toCamelCase(value) {
@@ -97,10 +102,15 @@ function convertTextSegment(text, iterateStack) {
 
 function buildIfTag(tagName, tagSource) {
   const attributes = parseAttributes(tagSource);
+  const tagConfig = CONDITIONAL_TAGS.get(tagName.toLowerCase());
   const property = attributes.property || "";
   const compareValue = attributes.compareValue || "";
-  const operator = CONDITIONAL_TAGS.get(tagName.toLowerCase())?.operator || "";
+  const operator = tagConfig?.operator || "";
   const propertyExpression = toCamelCase(property);
+
+  if (tagConfig?.type === "notEmpty") {
+    return `<if test='${propertyExpression} != null and ${propertyExpression} != ""'>`;
+  }
 
   return `<if test='${operator}"${compareValue}".equals(${propertyExpression})'>`;
 }
@@ -118,7 +128,7 @@ function buildForeachTag(tagSource, iterateStack) {
 }
 
 function convertMyBatisXml(source) {
-  const tagPattern = /<\/?\s*(isEqual|isNotEqual|iterate)\b[^>]*>/gi;
+  const tagPattern = /<\/?\s*(isEqual|isNotEqual|isNotEmpty|iterate)\b[^>]*>/gi;
   const iterateStack = [];
   let result = "";
   let lastIndex = 0;

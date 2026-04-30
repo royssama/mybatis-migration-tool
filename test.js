@@ -14,7 +14,10 @@ const conditionalSource = `<isEqual property = "AA_TYPE" compareValue="s001" >
 </isEqual>
 <isNotEqual property = "BB_FFF_CODE" compareValue="C001" >
   AND BB_FFF_CODE != #BB_FFF_CODE#
-</isNotEqual>`;
+</isNotEqual>
+<isNotEmpty property = "USER_NAME" >
+  AND USER_NAME = #USER_NAME#
+</isNotEmpty>`;
 
 assert.equal(
   convertMyBatisXml(conditionalSource),
@@ -26,6 +29,9 @@ assert.equal(
 </if>
 <if test='!"C001".equals(bbFffCode)'>
   AND BB_FFF_CODE != #{bbFffCode}
+</if>
+<if test='userName != null and userName != ""'>
+  AND USER_NAME = #{userName}
 </if>`,
 );
 
