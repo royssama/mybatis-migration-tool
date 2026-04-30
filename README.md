@@ -15,9 +15,10 @@
 - `<isNotEmpty property="USER_NAME">` -> `<if test='userName != null and userName != ""'>`
 - `<isEmpty property="KEYWORD">` -> `<if test='keyword == null or keyword == ""'>`
 - `<iterate property="AAA_LIST" conjunction=",">` -> `<foreach collection="aaaList" item="item1" separator=",">`
+- `<iterate prepend="IN" property="ARR_TECH_CD" open="(" close=")" conjunction=",">` -> `<foreach collection="arrTechCd" item="item1" open="IN (" close=")" separator=",">`
 - `$STR_WHERE$` -> `${strWhere}`
 
-조건 태그의 DTO `property` 값, 일반 `#PARAM_NAME#` 파라미터, `iterate`의 collection 이름은 camelCase로 변환합니다. 리스트 내부 컬럼명은 원래 이름을 유지합니다.
+조건 태그의 DTO `property` 값, 일반 `#PARAM_NAME#` 파라미터, 일반 `$PARAM_NAME$` 문자열 치환, `iterate`의 collection 이름은 camelCase로 변환합니다. 조건 태그의 `prepend`는 `<if>` 내부 첫 줄로 옮기고, `iterate`의 `prepend`, `open`, `close`는 `foreach` 속성으로 변환합니다. 리스트 내부 컬럼명은 원래 이름을 유지합니다.
 
 ## 검증
 

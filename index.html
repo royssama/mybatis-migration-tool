@@ -49,6 +49,7 @@
           <li><code>&lt;isNotEqual&gt;</code> 은 의미에 맞게 <code>!</code> 를 붙여 <code>&lt;if test='!"C001".equals(bbFffCode)'&gt;</code> 로 변환합니다.</li>
           <li><code>&lt;isNotEmpty property="USER_NAME"&gt;</code> 는 <code>&lt;if test='userName != null and userName != ""'&gt;</code> 로 변환합니다.</li>
           <li><code>&lt;isEmpty property="KEYWORD"&gt;</code> 는 <code>&lt;if test='keyword == null or keyword == ""'&gt;</code> 로 변환합니다.</li>
+          <li><code>prepend</code> 는 조건 태그 내부 텍스트 또는 <code>foreach open</code> 속성으로 반영하고, <code>open</code>/<code>close</code> 도 유지합니다.</li>
           <li><code>$STR_WHERE$</code> 같은 일반 문자열 치환 파라미터는 <code>${strWhere}</code> 로 변환합니다.</li>
           <li>태그의 <code>property</code> 값은 전체 소문자 변환 후 언더바 다음 문자만 대문자로 바꾸고 언더바를 제거합니다.</li>
           <li><code>SRCTYPE</code> 는 <code>srctype</code>, <code>AAA_LIST</code> 는 <code>aaaList</code> 로 변환합니다.</li>

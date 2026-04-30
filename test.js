@@ -63,4 +63,20 @@ assert.equal(
     "</foreach>",
 );
 
+const prependIterateSource = `<isNotEmpty prepend ="AND TECH_CD" property ="ARR_TECH_CD">
+<iterate prepend = "IN" property="ARR_TECH_CD" open="(" close=")" conjunction=",">
+#ARR_TECH_CD[]#
+</iterate>
+</isNotEmpty>`;
+
+assert.equal(
+  convertMyBatisXml(prependIterateSource),
+  `<if test='arrTechCd != null and arrTechCd != ""'>
+AND TECH_CD
+<foreach collection="arrTechCd" item="item1" open="IN (" close=")" separator=",">
+#{item1}
+</foreach>
+</if>`,
+);
+
 console.log("All tests passed");

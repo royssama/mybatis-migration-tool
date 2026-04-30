@@ -124,6 +124,14 @@ function convertTextSegment(text, iterateStack) {
   return convertDollarParameters(convertedHashes, iterateStack);
 }
 
+function buildAttribute(name, value) {
+  if (value === undefined || value === null || value === "") {
+    return "";
+  }
+
+  return ` ${name}="${value}"`;
+}
+
 function buildIfTag(tagName, tagSource) {
   const attributes = parseAttributes(tagSource);
   const tagConfig = CONDITIONAL_TAGS.get(tagName.toLowerCase());
@@ -131,16 +139,17 @@ function buildIfTag(tagName, tagSource) {
   const compareValue = attributes.compareValue || "";
   const operator = tagConfig?.operator || "";
   const propertyExpression = toCamelCase(property);
+  const prepend = attributes.prepend ? `\n${attributes.prepend}` : "";
 
   if (tagConfig?.type === "notEmpty") {
-    return `<if test='${propertyExpression} != null and ${propertyExpression} != ""'>`;
+    return `<if test='${propertyExpression} != null and ${propertyExpression} != ""'>${prepend}`;
   }
 
   if (tagConfig?.type === "empty") {
-    return `<if test='${propertyExpression} == null or ${propertyExpression} == ""'>`;
+    return `<if test='${propertyExpression} == null or ${propertyExpression} == ""'>${prepend}`;
   }
 
-  return `<if test='${operator}"${compareValue}".equals(${propertyExpression})'>`;
+  return `<if test='${operator}"${compareValue}".equals(${propertyExpression})'>${prepend}`;
 }
 
 function buildForeachTag(tagSource, iterateStack) {
@@ -148,11 +157,13 @@ function buildForeachTag(tagSource, iterateStack) {
   const collection = attributes.property || attributes.collection || "";
   const convertedCollection = toCamelCase(collection);
   const separator = attributes.conjunction ?? attributes.separator ?? "";
+  const open = [attributes.prepend, attributes.open].filter(Boolean).join(" ");
+  const close = attributes.close;
   const item = `item${iterateStack.length + 1}`;
 
   iterateStack.push({ collection, item });
 
-  return `<foreach collection="${convertedCollection}" item="${item}" separator="${separator}">`;
+  return `<foreach collection="${convertedCollection}" item="${item}"${buildAttribute("open", open)}${buildAttribute("close", close)} separator="${separator}">`;
 }
 
 function convertMyBatisXml(source) {
